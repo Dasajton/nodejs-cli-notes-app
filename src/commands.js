@@ -8,6 +8,7 @@ import {
   removeAllNotes,
 } from "./notes.js";
 import { listAllNotes } from "./utils.js";
+import { start } from "./server.js";
 
 yargs(hideBin(process.argv))
   .scriptName("note")
@@ -53,6 +54,21 @@ yargs(hideBin(process.argv))
     async (argv) => {
       const notes = await findNotes(argv.filter);
       listAllNotes(notes);
+    }
+  )
+  .command(
+    "web [port]",
+    "launch website to see notes",
+    (yargs) => {
+      return yargs.positional("port", {
+        describe: "port to bind on",
+        default: 5000,
+        type: "number",
+      });
+    },
+    async (argv) => {
+      const notes = await getAllNotes();
+      start(notes, argv.port);
     }
   )
   .command(
